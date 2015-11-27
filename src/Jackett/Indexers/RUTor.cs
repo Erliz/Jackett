@@ -23,8 +23,8 @@ namespace Jackett.Indexers
 {
     public class RuTor : BaseIndexer, IIndexer
     {
-        private string SearchUrl { get { return SiteLink + "search/0/{0}/000/0/{1}"; } }
-        private string BrowseUrl { get { return SiteLink + "browse/0/{0}/0/0"; } }
+        private string SearchUrl { get { return configData.Url.Value + "search/0/{0}/000/0/{1}"; } }
+        private string BrowseUrl { get { return configData.Url.Value + "browse/0/{0}/0/0"; } }
         readonly static string defaultSiteLink = "http://rutor.org/";
 
         new ConfigurationDataRuTor configData
@@ -159,7 +159,6 @@ namespace Jackett.Indexers
 
                     release.MinimumRatio = 1;
                     release.MinimumSeedTime = 172800;
-
                     var date = StringUtil.StripNonAlphaNumeric(row.Cq().Find("td:eq(0)").Text().Trim()
                         .Replace("Янв", "01")
                         .Replace("Фев", "02")
@@ -211,8 +210,10 @@ namespace Jackett.Indexers
 
                     if (hasTorrent)
                     {
-                        release.Link = new Uri(row.Cq().Find("td:eq(1) a:eq(0)").Attr("href"));
-                        release.MagnetUri = new Uri(row.Cq().Find("td:eq(1) a:eq(1)").Attr("href"));
+                        var torretUri = row.Cq().Find("td:eq(1) a:eq(0)").Attr("href");
+                        var magnetUri = row.Cq().Find("td:eq(1) a:eq(1)").Attr("href");
+                        release.Link = new Uri(configData.Url.Value + torretUri);
+                        release.MagnetUri = new Uri(magnetUri);
                     }
                     else
                     {
