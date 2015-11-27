@@ -207,6 +207,7 @@
     <Compile Include="Indexers\Fuzer.cs" />
     <Compile Include="Indexers\GFTracker.cs" />
     <Compile Include="Indexers\ILoveTorrents.cs" />
+    <Compile Include="Indexers\NewStudio.cs" />
     <Compile Include="Indexers\RevolutionTT.cs" />
     <Compile Include="Indexers\TehConnection.cs" />
     <Compile Include="Indexers\Hounddawgs.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Models\IndexerConfig\Bespoke\ConfigurationDataBlueTigers.cs" />
     <Compile Include="Models\IndexerConfig\Bespoke\ConfigurationDataAbnormal.cs" />
     <Compile Include="Models\IndexerConfig\Bespoke\ConfigurationDataFrenchAdn.cs" />
+    <Compile Include="Models\IndexerConfig\Bespoke\ConfigurationDataNewStudio.cs" />
     <Compile Include="Models\IndexerConfig\Bespoke\ConfigurationDataWiHD.cs" />
     <Compile Include="Models\IndexerConfig\ConfigurationDataBasicLoginWithFilter.cs" />
     <Compile Include="Models\IndexerConfig\ConfigurationDataAPIKey.cs" />
@@ -526,6 +528,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\logos\ncore.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\logos\newstudio.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\logos\pretome.png">
