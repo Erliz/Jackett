@@ -144,8 +144,15 @@ namespace Jackett.Indexers
                         release.Title = release.Title.Substring(0, release.Title.IndexOf('|') - 1).Trim();
                     }
 
-                    var releaseInfoMatch = Regex.Match(title, @"Сезон (\d+), Серия (\d+)");
+                    var releaseInfoMatch = Regex.Match(title, @"Сезон (\d+), Серия ([\d\-]+)");
                     var episode = releaseInfoMatch.Groups[2].ToString().Trim();
+                    if(episode.IndexOf('-') > -1)
+                    {
+                        var episodeNumers = episode.Split('-');
+                        episode = (episodeNumers[0].Length < 2 ? "0" + episodeNumers[0] : episodeNumers[0])
+                                + "-"
+                                + (episodeNumers[1].Length < 2 ? "0" + episodeNumers[1] : episodeNumers[1]);
+                    }
                     var season = releaseInfoMatch.Groups[1].ToString().Trim();
                     var seriesInfo = string.Format("s{0}e{1}", season.Length < 2 ? "0" + season : season, episode.Length < 2 ? "0" + episode : episode);
 
