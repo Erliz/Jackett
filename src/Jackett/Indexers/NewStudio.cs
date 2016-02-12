@@ -96,7 +96,7 @@ namespace Jackett.Indexers
             
             if (!string.IsNullOrWhiteSpace(searchString))
             {
-                queryData.Add(new KeyValuePair<string, string>("nm", HttpUtility.UrlEncode(searchString.Trim())));
+                queryData.Add(new KeyValuePair<string, string>("nm", searchString.Trim()));
             }
 
             var results = await PostDataWithCookiesAndRetry(SearchUrl, queryData, string.Empty);
