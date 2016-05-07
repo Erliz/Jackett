@@ -187,6 +187,7 @@
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Indexers\MyAnonamouse.cs" />
+    <Compile Include="Indexers\Soap4Me.cs" />
     <Compile Include="Indexers\Xthor.cs" />
     <Compile Include="Indexers\PhxBit.cs" />
     <Compile Include="Indexers\AlphaRatio.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Models\IndexerConfig\Bespoke\ConfigurationDataAbnormal.cs" />
     <Compile Include="Models\IndexerConfig\Bespoke\ConfigurationDataFrenchAdn.cs" />
     <Compile Include="Models\IndexerConfig\Bespoke\ConfigurationDataNewStudio.cs" />
+    <Compile Include="Models\IndexerConfig\Bespoke\ConfigurationDataSoap4Me.cs" />
     <Compile Include="Models\IndexerConfig\Bespoke\ConfigurationDataWiHD.cs" />
     <Compile Include="Models\IndexerConfig\ConfigurationDataBasicLoginWithFilter.cs" />
     <Compile Include="Models\IndexerConfig\ConfigurationDataAPIKey.cs" />
@@ -563,6 +565,9 @@
     <Content Include="Content\logos\showrss.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\logos\soap4me.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\logos\speedcd.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -698,7 +703,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

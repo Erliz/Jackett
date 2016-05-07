@@ -107,12 +107,12 @@ namespace JackettTray
 #if __MonoCS__
             // No shortcuts on linux
 #else
-            var appPath = Assembly.GetExecutingAssembly().Location;
-            var shell = new IWshRuntimeLibrary.WshShell();
-            var shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(ShortcutPath);
-            shortcut.Description = Assembly.GetExecutingAssembly().GetName().Name;
-            shortcut.TargetPath = appPath;
-            shortcut.Save();
+            // var appPath = Assembly.GetExecutingAssembly().Location;
+            // var shell = new IWshRuntimeLibrary.WshShell();
+            // var shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(ShortcutPath);
+            // shortcut.Description = Assembly.GetExecutingAssembly().GetName().Name;
+            // shortcut.TargetPath = appPath;
+            // shortcut.Save();
 #endif
         }
 
@@ -152,7 +152,7 @@ namespace JackettTray
                 if (ServerUtil.IsUserAdministrator())
                 {
                     Engine.ServiceConfig.Stop();
-                    
+
                 } else
                 {
                     try
