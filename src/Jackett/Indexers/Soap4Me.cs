@@ -121,15 +121,20 @@ namespace Jackett.Indexers
                     var release = getBaseReleaseInfo(episodeDom);
                     var mediaInfo = await getMediaInfo(episodeDom);
 
-                    string serialTitle = episodeDom.Find(".soap").ToString().Trim();
-                    string episodeNums = episodeDom.Find(".nums").ToString().Trim();
-
-                    release.Title = "[" + getEpisodeTranslatorGroup(episodeDom) + "] " + serialTitle + " " + episodeNums + " [" + getEpisodeLanguage(episodeDom) + "]";
+                    string serialTitle = episodeDom.Find(".soap").Text().ToString().Trim();
+                    string episodeNums = episodeDom.Find(".nums").Text().ToString().Trim();
+                    string translationGroup = getEpisodeTranslatorGroup(episodeDom);
+                    if (translationGroup.Length > 0)
+                    {
+                        release.Title = "[" + translationGroup + "] ";
+                    }
+                    release.Title = release.Title + serialTitle + " " + episodeNums;
 
                     if (mediaInfo.Value<int>("ok") == 1)
                     {
                         release.Seeders = getEpisodeTorrentSeeders(mediaInfo);
                         release.Peers = getEpisodeTorrentPeers(mediaInfo);
+                        release.Size = getEpisodeFileSize(mediaInfo);
                         release.Title = release.Title + " " + getEpisodeDimensions(mediaInfo);
                     }
 
@@ -168,7 +173,7 @@ namespace Jackett.Indexers
                 foreach (var seasonLinkTag in seasonsLinksTags)
                 {
                     string seasonLink = SiteLink + seasonLinkTag.Cq().Attr("href");
-                    if (getSeasonFromQuery(query) > 0 && !Regex.IsMatch(seasonLink, @"/" + getSeasonFromQuery(query) + "/$"))
+                    if (getSeasonNumFromQuery(query) > 0 && !Regex.IsMatch(seasonLink, @"/" + getSeasonNumFromQuery(query) + "/$"))
                     {
                         continue;
                     }
@@ -180,7 +185,7 @@ namespace Jackett.Indexers
                     {
                         CQ row = episodeRow.Cq();
                         string episodeNum = row.Find(".number").Text().Trim();
-                        if (episodeNum == "--")
+                        if ((getEpisodeNumFromQuery(query) > 0 && episodeNum == getEpisodeNumFromQuery(query).ToString()) || episodeNum == "--")
                         {
                             continue;
                         }
@@ -189,7 +194,7 @@ namespace Jackett.Indexers
                         string translationGroup = getEpisodeTranslatorGroup(row);
                         if (translationGroup.Length > 0)
                         {
-                            release.Title = "[" + getEpisodeTranslatorGroup(row) + "] ";
+                            release.Title = "[" + translationGroup + "] ";
                         }
                         release.Title = release.Title + seriesTitle + " s" + seasonNum + "e" + episodeNum;
 
@@ -197,6 +202,7 @@ namespace Jackett.Indexers
                         {
                             release.Seeders = getEpisodeTorrentSeeders(mediaInfo);
                             release.Peers = getEpisodeTorrentPeers(mediaInfo);
+                            release.Size = getEpisodeFileSize(mediaInfo);
                             release.Title = release.Title + " " + getEpisodeDimensions(mediaInfo);
                         }
                         release.Title = release.Title + " [" + getEpisodeLanguage(row) + "]";
@@ -226,15 +232,63 @@ namespace Jackett.Indexers
             return release;
         }
 
-        private int getSeasonFromQuery(String query)
+        private long getEpisodeFileSize(JObject info)
+        {
+            string[] dimensions = getEpisodeDimensions(info).Split('x');
+            int empiricalRate = 6;
+            // minutes * 60 (seconds) x 24 (FPS) x 6 (BPC) x 3 (RGB or 4 x for RGBA) x 512 (horizontal dimension) x 512 (vertical dimension) = in bits
+            return ReleaseInfo.GetBytes(
+                "kb",
+                (long) getEpisodeDurationSeconds(info) * 24 * getEpisodeBitRate(info) * 3 * ParseUtil.CoerceInt(dimensions[0]) * ParseUtil.CoerceInt(dimensions[1]) / empiricalRate / 8 / 1024f
+            );
+        }
+
+        private int getEpisodeBitRate(JObject info)
+        {
+            int rate = convertStringToInt(info.Value<string>("bitrate")) / 1000;
+            return rate > 0 ? rate : 1;
+        }
+
+        private int getEpisodeDurationSeconds(JObject info)
+        {
+            string duration = info.Value<string>("duration");
+            int seconds = convertStringToInt(Regex.Match(duration, @"\d+s").Value.ToString().Trim());
+            int minutes = convertStringToInt(Regex.Match(duration, @"\d+mn").Value.ToString().Trim());
+            int hours = convertStringToInt(Regex.Match(duration, @"\d+h").Value.ToString().Trim());
+            return hours * 60 * 60 + minutes * 60 +seconds;
+        }
+
+        private int convertStringToInt(String input)
+        {
+            input = stripNotNumbers(input);
+            return input.Length > 0 ? ParseUtil.CoerceInt(input) : 0;
+        }
+
+        private String stripNotNumbers(String input)
+        {
+            return Regex.Replace(input, @"[^0-9]", "");
+        }
+
+        private int getSeasonNumFromQuery(String query)
         {
             string seasonQuery = Regex.Match(query, @" S\d+(?:E|$)").Value.ToString().Trim();
             int seasonNum = 0;
             if (seasonQuery.Length > 0)
             {
-                seasonNum = ParseUtil.CoerceInt(Regex.Replace(seasonQuery, @"[^0-9]", ""));
+                seasonNum = convertStringToInt(seasonQuery);
             }
             return seasonNum;
+        }
+
+        private int getEpisodeNumFromQuery(String query)
+        {
+            string episodeQuery = Regex.Match(query, @" S\d+(E\d+)$").Groups[1].ToString().Trim();
+            int episodeNum = 0;
+            if (episodeQuery.Length > 0)
+            {
+                episodeNum = convertStringToInt(episodeQuery);
+            }
+            return episodeNum;
         }
 
         private String getEpisodeDimensions(JObject info)
