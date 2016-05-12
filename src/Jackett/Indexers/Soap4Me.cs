@@ -6,7 +6,6 @@ using Newtonsoft.Json.Linq;
 using NLog;
 using Jackett.Utils;
 using CsQuery;
-using System.Web;
 using Jackett.Services;
 using Jackett.Utils.Clients;
 using System.Text.RegularExpressions;
